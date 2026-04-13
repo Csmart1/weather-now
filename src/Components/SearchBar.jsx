@@ -10,14 +10,14 @@ export default function SearchBar() {
   const { searchCity } = useWeather();
   const [isOpen, setIsOpen] = useState(false);
 
-  // 1. CLICK OUTSIDE TO CLOSE
+  //  CLICK OUTSIDE TO CLOSE
   useEffect(() => {
     const closeDropdown = () => setIsOpen(false);
     window.addEventListener("click", closeDropdown);
     return () => window.removeEventListener("click", closeDropdown);
   }, []);
 
-  // 2. SUGGESTION LOGIC
+  // SUGGESTION LOGIC
   useEffect(() => {
     if (query.trim().length <= 2) {
       setSuggestions([]);
@@ -28,7 +28,7 @@ export default function SearchBar() {
     const getSuggestions = async () => {
       try {
         const results = await fetchCitySuggestions(query);
-        // Only show if user is still typing in the input
+
         if (query.trim().length > 2) {
           setSuggestions(Array.isArray(results) ? results : []);
           setIsOpen(true);
@@ -39,18 +39,16 @@ export default function SearchBar() {
       }
     };
 
-    // Reduced to 150ms for a snappier feel
     const timeoutId = setTimeout(getSuggestions, 150);
     return () => clearTimeout(timeoutId);
   }, [query]);
 
-  // 3. HANDLE SEARCH BUTTON / ENTER
+  // SEARCH BUTTON / ENTER
   const handleSearch = (e) => {
     if (e) e.preventDefault();
 
     const finalQuery = query.trim();
     if (finalQuery) {
-      // KILL THE DROPDOWN IMMEDIATELY
       setIsOpen(false);
       setSuggestions([]);
 
@@ -59,13 +57,12 @@ export default function SearchBar() {
     }
   };
 
-  // 4. HANDLE CLICKING A CITY
+  // HANDLE CLICKING A CITY
   const handleSelectSuggestion = (city) => {
-    // KILL THE DROPDOWN IMMEDIATELY
+    // set dropdown false
     setIsOpen(false);
     setSuggestions([]);
 
-    // Using coordinates is more accurate
     searchCity({ lat: city.latitude, lon: city.longitude });
     setQuery("");
   };
@@ -73,11 +70,11 @@ export default function SearchBar() {
   return (
     <div
       className="w-full flex justify-center relative z-[100]"
-      onClick={(e) => e.stopPropagation()} // Prevents clicking the bar itself from closing it
+      onClick={(e) => e.stopPropagation()}
     >
       <form
         onSubmit={handleSearch}
-        className="flex items-center gap-4 w-full max-w-[700px] relative"
+        className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 w-full max-w-[700px] relative"
       >
         <div className="relative flex-1">
           <img
@@ -94,7 +91,6 @@ export default function SearchBar() {
           />
 
           <AnimatePresence>
-            {/* KEY CHANGE: Check isOpen and suggestions.length */}
             {isOpen && suggestions.length > 0 && (
               <motion.div
                 key="suggestions-dropdown"
