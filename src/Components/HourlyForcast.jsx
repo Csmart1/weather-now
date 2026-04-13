@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useWeather } from "../Context/WeatherContext";
 import iconArrowDown from "../assets/icon-dropdown.svg";
 import { getWeatherDetails } from "../Utility/weatherMapper";
-// 1. ADD THIS IMPORT
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function HourlyForecast() {
@@ -47,13 +46,12 @@ export default function HourlyForecast() {
         .slice(0, 24);
     }
 
-    // NEW ROBUST LOGIC FOR NEXT DAYS
     const targetDate = new Date();
     targetDate.setDate(now.getDate() + selectedDay);
 
     return weather.hourly.filter((item) => {
       const itemDate = new Date(item.time);
-      // We check if the Year, Month, and Date match exactly in local time
+      // check the Year, Month, and Date to match exactly in local time
       return (
         itemDate.getFullYear() === targetDate.getFullYear() &&
         itemDate.getMonth() === targetDate.getMonth() &&
@@ -105,11 +103,10 @@ export default function HourlyForecast() {
           // --- NIGHT LOGIC START ---
           const dateObj = new Date(row.time);
           const hour = dateObj.getHours();
-          // Define night as before 6 AM or after 7 PM (19:00)
+
           const isNight = hour < 6 || hour >= 19;
 
           const { icon, label } = getWeatherDetails(row.weather_code, isNight);
-          // --- NIGHT LOGIC END ---
 
           const timeLabel =
             row.temp !== null

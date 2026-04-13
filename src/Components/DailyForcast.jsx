@@ -16,12 +16,12 @@ function DayCard({ day, icon, high, low, isActive, isPlaceholder, label }) {
       className={`flex flex-col items-center gap-3 p-4 rounded-[12px] min-w-[110px] transition-all border
       ${
         isActive
-          ? "bg-[#1e233d] shadow-2xl text-white-500 border-white/20" // Stronger border on active card
+          ? "bg-[#1e233d] shadow-2xl text-white-500 border-white/20"
           : "bg-[#1e233d]/40 border-white/5"
       } 
       ${isPlaceholder ? "opacity-30" : "opacity-100"}`}
     >
-      <span 
+      <span
         className={`font-bold text-[10px] uppercase tracking-tighter transition-colors
         ${isActive ? "text-white opacity-100" : "text-gray-500"}`}
       >
@@ -32,17 +32,16 @@ function DayCard({ day, icon, high, low, isActive, isPlaceholder, label }) {
         {icon ? (
           <FontAwesomeIcon
             icon={icon}
-           
             className={`text-2xl transition-all duration-300
               ${
-                label?.includes("Clear") || label?.includes("Sun") || label?.includes("Thunderstorm")
+                label?.includes("Clear") ||
+                label?.includes("Sun") ||
+                label?.includes("Thunderstorm")
                   ? "text-yellow-400"
                   : label?.includes("Rain")
                     ? "text-blue-400"
                     : "text-gray-300"
               }`}
-            
-          
           />
         ) : (
           <div className="w-6 h-6 bg-white/5 rounded-full animate-pulse" />
@@ -50,11 +49,7 @@ function DayCard({ day, icon, high, low, isActive, isPlaceholder, label }) {
       </div>
 
       <div className="flex flex-col items-center">
-        
-        <span 
-          className="font-bold text-lg leading-none"
-          style={highTempStyle}
-        >
+        <span className="font-bold text-lg leading-none" style={highTempStyle}>
           {high !== "-" ? `${high}°` : "--"}
         </span>
         <span className="text-gray-500 text-xs mt-1">
@@ -68,21 +63,17 @@ function DayCard({ day, icon, high, low, isActive, isPlaceholder, label }) {
 export default function DailyForecast() {
   const { weather, loading, error } = useWeather();
 
-  // SAFETY CHECK: Ensure we have the list or daily object before mapping
+  // Ensure the list or daily object before mapping
   const dailyData = weather?.daily || weather?.list;
   const hasValidData = dailyData && !error && !loading;
 
   const displayList = Array.from({ length: 7 }, (_, i) => {
-    // Check if we have data for this specific day
     if (hasValidData && weather.list?.[i]) {
       const dayData = weather.list[i];
       const dateObj = new Date(dayData.dt * 1000);
 
-      // FIX: Your service doesn't put weather_code in daily anymore.
-      // It puts the condition string in dayData.weather[0].main
       const condition = dayData.weather[0].main;
 
-      // Use the condition string directly with your theme helper
       const { icon, label } = getWeatherDetailsByCondition(condition);
 
       return {
@@ -99,7 +90,6 @@ export default function DailyForecast() {
       };
     }
 
-    // Fallback/Loading State
     const { icon, label } = getWeatherDetails(0, false);
     return {
       day: "---",

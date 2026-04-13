@@ -36,7 +36,7 @@ export const WeatherProvider = ({ children }) => {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        console.log("REAL COORDS:", pos.coords); // 🔍 DEBUG
+        console.log("REAL COORDS:", pos.coords); 
 
         searchCity({
           lat: pos.coords.latitude,

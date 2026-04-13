@@ -1,6 +1,6 @@
 // src/Components/AirConditions.jsx
 import { useWeather } from "../Context/WeatherContext";
-import { motion } from "framer-motion";
+
 
 export default function AirConditions() {
   const { weather, loading, unit, error } = useWeather();
@@ -8,7 +8,7 @@ export default function AirConditions() {
  
   const tempUnit = unit === "metric" ? "°C" : "°F";
   const windUnit = unit === "metric" ? "km/h" : "mph";
-  const precipUnit = unit === "metric" ? "mm" : "in";
+  
 
   
   const hasValidData = weather && !error && !loading;

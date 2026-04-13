@@ -1,4 +1,3 @@
-// src/api/weatherService.js
 const GEO_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 // Reverse Geocoding API to get the city name from coordinates
@@ -12,7 +11,7 @@ export const fetchCitySuggestions = async (query) => {
       `${GEO_URL}?name=${encodeURIComponent(query)}&count=5&language=en&format=json`,
     );
     const data = await response.json();
-    // This returns the ARRAY of cities that your SearchBar needs
+
     return data.results || [];
   } catch (error) {
     console.error("Error fetching suggestions:", error);
@@ -20,7 +19,7 @@ export const fetchCitySuggestions = async (query) => {
   }
 };
 
-// --- 2. THE WEATHER DATA FUNCTION (Rename this one correctly) ---
+// --- THE WEATHER DATA FUNCTION ---
 export const fetchWeatherData = async (query, unit) => {
   let latitude, longitude, name, country;
 
@@ -46,7 +45,6 @@ export const fetchWeatherData = async (query, unit) => {
     if (!geoData.results?.length) throw new Error("City not found");
     ({ latitude, longitude, name, country } = geoData.results[0]);
   }
-  // 2. FETCH WEATHER
   const unitParam = unit === "metric" ? "celsius" : "fahrenheit";
   const windParam = unit === "metric" ? "kmh" : "mph";
 
@@ -63,17 +61,13 @@ export const fetchWeatherData = async (query, unit) => {
 
   const data = await weatherRes.json();
 
-  // 1. Get the current hour index to find the REAL "next" hour
   const currentHour = new Date().getHours();
 
   const getDominantWeather = (current, hourlyCodes) => {
-    // Look at the current hour and the next 2 hours
     const immediateWindow = hourlyCodes.slice(currentHour, currentHour + 3);
 
-    // Check for Thunderstorm (95+) first
     if (current >= 95 || immediateWindow.some((code) => code >= 95)) return 95;
 
-    // Check for Heavy Rain (65, 67, 81, 82)
     const heavyRainCodes = [65, 67, 81, 82];
     if (
       heavyRainCodes.includes(current) ||
@@ -82,7 +76,6 @@ export const fetchWeatherData = async (query, unit) => {
       return 65;
     }
 
-    // Regular Rain
     if (
       (current >= 51 && current <= 63) ||
       immediateWindow.some((code) => code >= 51 && code <= 63)
@@ -93,7 +86,6 @@ export const fetchWeatherData = async (query, unit) => {
     return current;
   };
 
-  // Pass the whole hourly array to the checker
   const realTimeCode = data.current.weather_code;
   const dominantCode = getDominantWeather(
     realTimeCode,
@@ -104,7 +96,7 @@ export const fetchWeatherData = async (query, unit) => {
     sys: { country: country },
     current: {
       is_day: data.current.is_day,
-      weather_code: realTimeCode, //ACTUAL 
+      weather_code: realTimeCode,
       dominant_code: dominantCode,
     },
     coords: { lat: latitude, lon: longitude },
@@ -118,7 +110,7 @@ export const fetchWeatherData = async (query, unit) => {
     wind: { speed: data.current.wind_speed_10m },
     weather: [{ main: getWeatherStatus(data.current.weather_code) }],
     weatherCode: realTimeCode,
-    // Fixed version
+
     hourly: data.hourly.time.map((time, i) => ({
       time: time,
       temp: data.hourly.temperature_2m[i],

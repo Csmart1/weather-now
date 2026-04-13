@@ -1,5 +1,3 @@
-// src/components/Welcome.jsx
-
 export default function Welcome() {
   return (
     <div className="w-full text-center mt-5 mb-4">

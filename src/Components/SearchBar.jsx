@@ -69,7 +69,7 @@ export default function SearchBar() {
 
   return (
     <div
-      className="w-full flex justify-center relative z-[100]"
+      className="w-full flex justify-center relative z-[50]"
       onClick={(e) => e.stopPropagation()}
     >
       <form

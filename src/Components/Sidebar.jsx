@@ -1,4 +1,4 @@
-<div className="w-8 flex justify-center">
+{/* <div className="w-8 flex justify-center">
   <FontAwesomeIcon
     icon={icon}
     className={`text-xl transition-all duration-300 group-hover:scale-125 ${
@@ -8,4 +8,4 @@
     } ${row.temp === null ? "opacity-20" : ""}`}
     title={label}
   />
-</div>;
+</div>; */}

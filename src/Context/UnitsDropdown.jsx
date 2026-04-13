@@ -1,14 +1,31 @@
-import { useState } from "react";
 import { useWeather } from "./WeatherContext";
 import { motion, AnimatePresence } from "framer-motion";
 import iconUnits from "../assets/icon-units.svg";
 import iconDropdown from "../assets/icon-dropdown.svg";
+import { useState, useEffect, useRef } from "react";
 
 export default function UnitsDropdown() {
   const { unit, setUnit, weather, searchCity } = useWeather();
   const [isOpen, setIsOpen] = useState(false);
 
-  // This function handles the "flip" for both the Master Toggle and individual rows
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
   const handleUnitChange = (newUnit) => {
     if (newUnit !== unit) {
       setUnit(newUnit);
@@ -17,15 +34,13 @@ export default function UnitsDropdown() {
   };
 
   return (
-    <div className="relative">
-      {/* Main Trigger Button */}
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-[#1e233d] hover:bg-[#2a3052] cursor-pointer transition-all px-3 py-2 md:px-6 md:py-2.5 rounded-lg flex items-center gap-2 md:gap-4 shadow-2xl border border-white/5"
       >
         <img src={iconUnits} alt="Settings" className="w-4 h-4 opacity-70" />
 
-        {/* Smaller font and tighter tracking for mobile */}
         <span className="text-[13px] md:text-[15px] font-medium tracking-normal text-white">
           Units
         </span>
@@ -44,9 +59,8 @@ export default function UnitsDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-3 w-72 bg-[#1b1f38] border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 p-5 overflow-hidden"
+            className="absolute right-0 mt-3 w-[280px] bg-[#1b1f38] border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[999] p-5 overflow-hidden backdrop-blur-md"
           >
-            {/* 1. MASTER TOGGLE HEADER */}
             <button
               onClick={() =>
                 handleUnitChange(unit === "metric" ? "imperial" : "metric")
@@ -64,7 +78,6 @@ export default function UnitsDropdown() {
             <div className="h-[1px] bg-white/5 my-4" />
 
             <div className="space-y-6">
-              {/* 2. TEMPERATURE SECTION */}
               <div className="space-y-3">
                 <p className="text-[10px] text-white/20 uppercase font-black">
                   Temperature
@@ -81,7 +94,6 @@ export default function UnitsDropdown() {
                 />
               </div>
 
-              {/* 3. WIND SPEED SECTION */}
               <div className="space-y-3">
                 <p className="text-[10px] text-white/20 uppercase font-black">
                   Wind Speed
@@ -98,7 +110,6 @@ export default function UnitsDropdown() {
                 />
               </div>
 
-              {/* 4. PRECIPITATION SECTION */}
               <div className="space-y-3">
                 <p className="text-[10px] text-white/20 uppercase font-black">
                   Precipitation
@@ -122,10 +133,6 @@ export default function UnitsDropdown() {
   );
 }
 
-/**
- * Helper component for individual unit rows
- * Ensures visual consistency and cursor-pointer everywhere
- */
 function UnitRow({ label, active, onClick }) {
   return (
     <div
